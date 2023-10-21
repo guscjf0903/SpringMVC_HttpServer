@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Optional;
 
 @RestController
@@ -29,7 +30,7 @@ public class HttpController {
         return timeService.getTime();
     }
     @PostMapping("/text/{textID}")
-    public ResponseEntity<String> postText(@PathVariable String textID, @RequestBody String text) {
+    public ResponseEntity<String> postText(@PathVariable String textID, @RequestBody String text) throws SQLException {
         TextSave textSave = new TextSave(textID, text);
         if(textID == null || text == null) {
             return ResponseEntity.badRequest().body("fail");
@@ -37,15 +38,15 @@ public class HttpController {
         return ResponseEntity.ok().body(textService.save(textSave));
     }
     @GetMapping("/text/{textID}")
-    public String getText(@PathVariable String textID) {
+    public String getText(@PathVariable String textID) throws SQLException {
         return textService.findByTextId(textID).orElse("no text");
     }
     @DeleteMapping("/text/{textID}")
-    public String deleteText(@PathVariable String textID) {
-        return textService.deleteText(textID).orElse("no text") + " delete";
+    public String deleteText(@PathVariable String textID) throws SQLException {
+        return textService.deleteText(textID).orElse("no text_id") + " delete";
     }
-    @GetMapping("/textAll")
-    public String getAllText() {
+    @GetMapping("/textAll") //아얘 리스트에 값이 하나도 없다면 다시 예외처리
+    public String getAllText() throws SQLException {
         return textService.textAll().toString();
     }
     @GetMapping(value = "/image/{imageId}", produces = {"image/png", "image/jpeg"})
