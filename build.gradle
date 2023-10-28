@@ -19,7 +19,6 @@ configurations {
 
 repositories {
     mavenCentral()
-
 }
 
 dependencies {
@@ -30,6 +29,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.postgresql:postgresql:42.6.0'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 
