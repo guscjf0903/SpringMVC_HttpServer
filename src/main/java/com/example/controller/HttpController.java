@@ -5,16 +5,11 @@ import com.example.service.ImageService;
 import com.example.service.TextService;
 import com.example.service.TimeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashMap;
-
-import static com.example.entity.HttpResponseCode.createResponse;
-
 
 @RestController
 @RequiredArgsConstructor
