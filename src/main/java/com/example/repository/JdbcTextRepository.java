@@ -1,73 +1,16 @@
 package com.example.repository;
 
-import com.example.entity.TextSave;
-import lombok.RequiredArgsConstructor;
+import com.example.entity.TextEntity;
+import org.springframework.data.jdbc.repository.query.Modifying;
+import org.springframework.data.jdbc.repository.query.Query;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashMap;
 
 @Repository
-@RequiredArgsConstructor
-public class JdbcTextRepository {
-    private final DataSource dataSource;
-    @Transactional
-    public void save(TextSave textSave) throws SQLException {
-        String sql = "INSERT INTO http_test.texttable (text_id, text) VALUES (?, ?)";
-        Connection conn = dataSource.getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql);
-
-        pstmt.setString(1, textSave.getTextId());
-        pstmt.setString(2, textSave.getText());
-        pstmt.executeUpdate();
-    }
-    @Transactional
-    public Integer delete(String text_id) throws SQLException {
-        String sql = "DELETE FROM http_test.texttable WHERE text_id = ?";
-        Connection conn = dataSource.getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql);
-
-        pstmt.setString(1, text_id);
-        return pstmt.executeUpdate();
-    }
-
-    @Transactional
-    public String findByTextId(String text_id) throws SQLException {
-        String sql = "SELECT text FROM http_test.texttable WHERE text_id = ?";
-        Connection conn = dataSource.getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql);
-
-        pstmt.setString(1, text_id);
-        ResultSet rs = pstmt.executeQuery();
-        if (rs.next()) {
-            return rs.getString("text");
-        } else {
-            return null;
-        }
-    }
-
-    @Transactional
-    public HashMap<String, String> textAll() throws SQLException {
-        String sql = "SELECT * FROM http_test.texttable";
-        Connection conn = dataSource.getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql);
-
-        ResultSet rs = pstmt.executeQuery();
-        if(!rs.next()){
-            return null;
-        }
-
-        HashMap<String, String> textAll = new HashMap<>();
-        do{
-            textAll.put(rs.getString("text_id"), rs.getString("text"));
-        }while (rs.next());
-
-        return textAll;
-    }
+public interface JdbcTextRepository extends JpaRepository<TextEntity, Integer> {
+    @Modifying
+    @Query("INSERT INTO texttable (text_id, text) VALUES (:text_id, :text)")
+    void saveText(@Param("text_id") String textId, @Param("text") String text);
 
 }
