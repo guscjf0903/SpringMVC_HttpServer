@@ -1,71 +1,36 @@
 package com.example.service;
 
 import com.example.entity.TextEntity;
-import com.example.repository.JdbcTextRepository;
+import com.example.repository.JpaTextRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-
-import static com.example.entity.HttpResponseCode.createResponse;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class TextService {
-    private final JdbcTextRepository textRepository;
+    private final JpaTextRepository textRepository;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public ResponseEntity<String> save(TextEntity textEntity) {
+    @Transactional
+    public String save(TextEntity textEntity) {
         if (textEntity.getText() == null || textEntity.getTextId() == null) {
-            return createResponse(HttpStatus.BAD_REQUEST, "text_id or text is null");
+            return "text_id or text is null";
         }
         try {
-            textRepository.saveText(textEntity.getTextId(), textEntity.getText());
+            textRepository.save(textEntity);
         } catch (Exception e) {
-            return createResponse(HttpStatus.CONFLICT, "Duplicate text_id found");
+            logger.trace("trace log = {}", e.getMessage());
+            return "Duplicate text_id found";
         }
-        return createResponse(HttpStatus.CREATED, textEntity.getTextId() + " save");
+        return textEntity.getTextId() + " save";
     }
 
-//    public ResponseEntity<String> delete(String text_id) throws SQLException {
-//        Integer deleteRowCount = textRepository.delete(text_id);
-//        if (deleteRowCount == 0) {
-//            return createResponse(HttpStatus.NOT_FOUND, "text_id not found");
-//        } else {
-//            return createResponse(HttpStatus.OK, text_id + " delete");
-//        }
-//    }
-//
-//    public ResponseEntity<String> findByTextId(String text_id) throws SQLException {
-//        String text = textRepository.findByTextId(text_id);
-//        if (text == null) {
-//            return createResponse(HttpStatus.NOT_FOUND, "text_id not found");
-//        } else {
-//            return createResponse(HttpStatus.OK, text_id + " : " + text);
-//        }
-//    }
-//
-//    public ResponseEntity<String> textAll() throws SQLException{
-//        HashMap<String, String> textAll = textRepository.textAll();
-//        if (textAll == null) {
-//            return createResponse(HttpStatus.NOT_FOUND, "text_id not found");
-//        } else {
-//            String hashToString = hashMapToString(textAll);
-//            return createResponse(HttpStatus.OK, hashToString);
-//        }
-//    }
-//
-//
-//    public String hashMapToString(HashMap<String, String> hashMap) {
-//        StringBuilder stringBuilder = new StringBuilder();
-//
-//        for(Map.Entry<String, String> entry : hashMap.entrySet()) {
-//            stringBuilder.append(entry.getKey()).append(" : ").append(entry.getValue()).append(", ");
-//        }
-//        if(!stringBuilder.isEmpty()){
-//            stringBuilder.setLength(stringBuilder.length() - 2);
-//        }
-//        return stringBuilder.toString();
-//    }
+    @Transactional
+    public String getText(String textId) {
+        return textRepository.findTextByTextId(textId);
+    }
 
 }

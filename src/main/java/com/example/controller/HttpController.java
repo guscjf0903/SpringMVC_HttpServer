@@ -4,8 +4,11 @@ import com.example.entity.TextEntity;
 import com.example.service.TextService;
 import com.example.service.TimeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static com.example.entity.HttpResponseCode.createResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,26 +26,24 @@ public class HttpController {
         TextEntity textEntity = new TextEntity();
         textEntity.setTextId(textID);
         textEntity.setText(text);
-        return textService.save(textEntity);
+
+        String responseMessage = textService.save(textEntity);
+        if(responseMessage.equals(textID + " save")) {
+            return createResponse(HttpStatus.CREATED, responseMessage);
+        } else {
+            return createResponse(HttpStatus.CONFLICT, responseMessage);
+        }
     }
-//    @DeleteMapping("/text/{textID}")
-//    public ResponseEntity<String> deleteText(@PathVariable String textID) throws SQLException {
-//        return textService.delete(textID);
-//    }
-//
-//    @GetMapping("/text/{textID}")
-//    public ResponseEntity<String> getText(@PathVariable String textID) throws SQLException {
-//        return textService.findByTextId(textID);
-//    }
-//
-//    @GetMapping("/textAll") //아얘 리스트에 값이 하나도 없다면 다시 예외처리
-//    public ResponseEntity<String> getAllText() throws SQLException {
-//        return textService.textAll();
-//    }
-//    @GetMapping(value = "/image/{imageId}", produces = {"image/png", "image/jpeg"})
-//    public byte[] getImage(@PathVariable String imageId) throws IOException {
-//        return imageService.findByImageId(imageId).orElse("no image".getBytes());
-//    }
+
+    @GetMapping("/text/{textID}")
+    public ResponseEntity<String> getText(@PathVariable String textID) {
+        String text = textService.getText(textID);
+        if(text == null) {
+            return createResponse(HttpStatus.NOT_FOUND, "text_id not found");
+        } else {
+            return createResponse(HttpStatus.OK, text);
+        }
+    }
 
 
 }

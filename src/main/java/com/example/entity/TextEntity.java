@@ -8,7 +8,7 @@ import lombok.Setter;
 
 
 @Entity
-@Table(name = "texttable")
+@Table(name = "texttable", schema = "http_test")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
@@ -16,8 +16,8 @@ import lombok.Setter;
 public class TextEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "index_column")
-    private Integer indexColumn;
+    @Column(name = "id")
+    private Integer id;
     @Column(name = "text_id")
     private String textId;
     @Column(name = "text")
