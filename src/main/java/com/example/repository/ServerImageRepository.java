@@ -12,12 +12,13 @@ import java.util.Optional;
 @Repository
 public class ServerImageRepository {
     private static final String IMAGE_PATH = "/Users/hyunchuljung/Desktop/ServerFolder/";
-    public Optional<byte[]> findImageByID(String imageId) throws IOException {
+    public byte[] findImageByID(String imageId) throws IOException {
         File file = new File(IMAGE_PATH + imageId);
         Path imagePath = file.toPath();
         if(!file.exists()){
-            return Optional.empty();
+            return null;
+        } else {
+            return Files.readAllBytes(imagePath);
         }
-        return Optional.of(Files.readAllBytes(imagePath));
     }
 }

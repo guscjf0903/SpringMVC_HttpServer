@@ -11,7 +11,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ImageService {
     private final ServerImageRepository serverImageRepository;
-    public Optional<byte[]> findByImageId(String imageId) throws IOException {
+    public byte[] findByImageId(String imageId) throws IOException {
+        if(imageId == null) {
+            return null;
+        }
         return serverImageRepository.findImageByID(imageId);
     }
 }

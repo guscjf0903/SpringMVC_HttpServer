@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class TextService {
@@ -27,10 +29,34 @@ public class TextService {
         }
         return textEntity.getTextId() + " save";
     }
-
     @Transactional
     public String getText(String textId) {
         return textRepository.findTextByTextId(textId);
     }
+    @Transactional
+    public String deleteText(String textId) {
+        if (textRepository.findTextByTextId(textId) == null) {
+            return "text_id not found";
+        }
+        textRepository.deleteByTextId(textId);
+        return textId + " delete";
+    }
+    @Transactional
+    public String getAll() {
+        List<Object> textList = textRepository.findAllText();
+        StringBuilder stringBuilder = new StringBuilder();
+        if(textList.isEmpty()) {
+            return "text_id not found";
+        } else {
+            for(Object objectText : textList) {
+                Object[] textArray = (Object[]) objectText;
+                String text = (String) textArray[0];
+                String textId = (String) textArray[1];
+                stringBuilder.append(textId).append(" : ").append(text).append("\n");
+            }
+            return stringBuilder.toString();
+        }
+    }
+
 
 }
