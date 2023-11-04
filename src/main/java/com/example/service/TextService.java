@@ -31,27 +31,33 @@ public class TextService {
     }
     @Transactional
     public String getText(String textId) {
-        return textRepository.findTextByTextId(textId);
+        TextEntity textEntity = textRepository.findTextByTextId(textId);
+        if(textEntity != null) {
+            return textEntity.getText();
+        }else {
+            return "text_id not found";
+        }
     }
     @Transactional
     public String deleteText(String textId) {
-        if (textRepository.findTextByTextId(textId) == null) {
+        TextEntity textEntity = textRepository.findTextByTextId(textId);
+        if (textEntity == null) {
             return "text_id not found";
+        } else {
+            textRepository.deleteByTextId(textId);
+            return textId + " delete";
         }
-        textRepository.deleteByTextId(textId);
-        return textId + " delete";
     }
     @Transactional
     public String getAll() {
-        List<Object> textList = textRepository.findAllText();
+        List<TextEntity> textList = textRepository.findAll();
         StringBuilder stringBuilder = new StringBuilder();
         if(textList.isEmpty()) {
             return "text_id not found";
         } else {
-            for(Object objectText : textList) {
-                Object[] textArray = (Object[]) objectText;
-                String text = (String) textArray[0];
-                String textId = (String) textArray[1];
+            for(TextEntity textEntity : textList) {
+                String text = textEntity.getText();
+                String textId = textEntity.getTextId();
                 stringBuilder.append(textId).append(" : ").append(text).append("\n");
             }
             return stringBuilder.toString();

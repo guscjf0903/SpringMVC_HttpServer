@@ -11,15 +11,10 @@ import java.util.List;
 
 @Repository
 public interface JpaTextRepository extends JpaRepository<TextEntity, Integer> {
-
-    @Query(value = "select texttable.text from TextEntity texttable where texttable.textId = :textId")
-    String findTextByTextId(@Param("textId") String textId);
-
+    TextEntity findTextByTextId(String textId);
     @Modifying
     @Query(value = "delete from TextEntity texttable where texttable.textId = :textId")
     void deleteByTextId(@Param("textId") String textId);
-
-    @Query(value = "select texttable.text, texttable.textId from TextEntity texttable")
-    List<Object> findAllText();
+    List<TextEntity> findAll();
 
 }

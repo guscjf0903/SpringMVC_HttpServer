@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import static com.example.entity.HttpResponseCode.creatImageResponse;
 import static com.example.entity.HttpResponseCode.createTextResponse;
@@ -42,8 +43,8 @@ public class HttpController {
     @GetMapping("/text/{textId}")
     public ResponseEntity<String> getText(@PathVariable String textId) {
         String text = textService.getText(textId);
-        if(text == null) {
-            return createTextResponse(HttpStatus.NOT_FOUND, "text_id not found");
+        if(Objects.equals(text, "text_id not found")) {
+            return createTextResponse(HttpStatus.NOT_FOUND, text);
         } else {
             return createTextResponse(HttpStatus.OK, text);
         }
